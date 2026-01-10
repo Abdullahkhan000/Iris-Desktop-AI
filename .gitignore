@@ -2,3 +2,5 @@
 client.py
 musiclibrary.py
 screenshot.png
+.idea/
+.venv/
