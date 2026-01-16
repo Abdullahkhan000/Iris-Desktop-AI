@@ -69,7 +69,6 @@ It manages:
 - 🎙️ **Wake Word:** “Iris”
 - ⌨️ **Hotkeys**
   - Windows → `Ctrl + Alt + I`
-  - macOS → `⌘ + Option + I`
 - 🖥️ **System Control**
   - Volume up/down/mute
   - Minimize / maximize / close windows
@@ -103,12 +102,6 @@ Follow these steps to run the project locally.
 
 #### Windows specific
 - PyAudio (see below)
-
-#### macOS specific
-- Microphone permission
-- Accessibility permission for automation
-- Python via Homebrew or python.org
-
 ---
 
 ### 📥 Installation
@@ -143,23 +136,6 @@ If still not working:
 
 - install Python **3.11**
 - reinstall PyAudio
-
-#### 🍎 macOS
-
-Install PortAudio first:
-
-```sh
-brew install portaudio
-pip install pyaudio
-```
-
-Apple Silicon:
-
-```sh
-arch -arm64 pip install pyaudio
-```
-
-> Note: pipwin is **Windows only**.
 
 ---
 
@@ -219,7 +195,6 @@ Examples:
 - keyboard
 - plyer
 
-> macOS uses native APIs instead of pywin32.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
