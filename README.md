@@ -1,28 +1,28 @@
 <a name="readme-top"></a>
 
 <div align="center">
-  <a href="https://github.com/Abdullahkhan000/Iris-Desktop-AI">
-    <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" alt="Logo" width="80" height="80">
-  </a>
+  <a href="https://github.com/Abdullahkhan000/Iris-Desktop-AI">
+    <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" alt="Logo" width="80" height="80">
+  </a>
 
-  <h3 align="center">Iris Desktop AI</h3>
+  <h3 align="center">Iris Desktop AI</h3>
 
-  <p align="center">
-    A cross-platform intelligent virtual assistant powered by Google Gemini.
-    <br />
-    <a href="https://github.com/Abdullahkhan000/Iris-Desktop-AI"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/Abdullahkhan000/Iris-Desktop-AI/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/Abdullahkhan000/Iris-Desktop-AI/issues">Request Feature</a>
-  </p>
+  <p align="center">
+    An intelligent virtual assistant powered by Google Gemini.
+    <br />
+    <a href="https://github.com/Abdullahkhan000/Iris-Desktop-AI"><strong>Explore the docs »</strong></a>
+    <br />
+    <br />
+    <a href="https://github.com/Abdullahkhan000/Iris-Desktop-AI/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/Abdullahkhan000/Iris-Desktop-AI/issues">Request Feature</a>
+  </p>
 </div>
 
 <div align="center">
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?style=for-the-badge&logo=python&logoColor=white)
-![OS](https://img.shields.io/badge/OS-Windows%20%7C%20macOS-lightgrey?style=for-the-badge&logo=apple)
+![OS](https://img.shields.io/badge/OS-Windows-blue?style=for-the-badge&logo=windows)
 ![AI](https://img.shields.io/badge/AI-Google%20Gemini-orange?style=for-the-badge&logo=google)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
@@ -36,14 +36,13 @@
 
 It integrates **Google Gemini 1.5 Flash** to handle:
 
-- complex queries  
-- conversational context  
-- dynamic AI responses  
+- complex queries  
+- conversational context  
+- dynamic AI responses  
 
-The project is **cross-platform** and automatically adapts to:
+The project is optimized for:
 
 - 🪟 Windows
-- 🍎 macOS
 
 It manages:
 
@@ -58,31 +57,31 @@ It manages:
 
 ## ✨ Key Features
 
-✔ AI-powered assistant  
-✔ Voice control with wake word  
-✔ Hotkeys  
-✔ Desktop automation  
+✔ AI-powered assistant  
+✔ Voice control with wake word  
+✔ Hotkeys  
+✔ Desktop automation  
 
 ### Features List
 
 - 🧠 **AI Intelligence:** Google Gemini 1.5 Flash
 - 🎙️ **Wake Word:** “Iris”
 - ⌨️ **Hotkeys**
-  - Windows → `Ctrl + Alt + I`
+  - Windows → `Ctrl + Alt + I`
 - 🖥️ **System Control**
-  - Volume up/down/mute
-  - Minimize / maximize / close windows
-  - Open apps (Notepad, Calculator, Terminal etc.)
-  - Shutdown / restart
+  - Volume up/down/mute
+  - Minimize / maximize / close windows
+  - Open apps (Notepad, Calculator, Terminal etc.)
+  - Shutdown / restart
 - 📸 **Utilities**
-  - Take screenshots
-  - Search files
-  - CPU & RAM usage
-  - Desktop notifications
+  - Take screenshots
+  - Search files
+  - CPU & RAM usage
+  - Desktop notifications
 - 🌍 **Multi-lingual**
-  - English
-  - Hindi
-  - (Urdu support depends on STT model)
+  - English
+  - Hindi
+  - (Urdu support depends on STT model)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -102,6 +101,7 @@ Follow these steps to run the project locally.
 
 #### Windows specific
 - PyAudio (see below)
+
 ---
 
 ### 📥 Installation
