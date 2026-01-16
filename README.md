@@ -173,7 +173,6 @@ Examples:
 | :--- | :--- |
 | **System** | “Volume up”, “Mute volume”, “System status” |
 | **Windows** | “Minimize window”, “Close window” |
-| **macOS** | “Open Finder”, “Open Safari”, “Take screenshot” |
 | **Apps** | “Open Notepad”, “Open Calculator”, “Open Terminal” |
 | **Files** | “Search file secret_project.txt” |
 | **General** | “What is the time?”, “Open browser”, “Send notification” |
