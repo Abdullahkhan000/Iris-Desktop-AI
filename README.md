@@ -184,15 +184,26 @@ Examples:
 
 ## 📦 Dependencies
 
-- speech_recognition
-- google-generativeai
-- gTTS
-- pygame
-- pyautogui
-- pywin32 (Windows only)
-- psutil
-- keyboard
-- plyer
+### 🎙️ Voice & Audio
+* `SpeechRecognition` - For processing audio input.
+* `gTTS` (Google Text-to-Speech) - To convert AI text response to audio.
+* `PyAudio` - Necessary for microphone access and real-time listening.
+* `pygame` - Used for audio playback and handling sound states.
+
+### 🧠 AI & API
+* `google-generativeai` - Official SDK for Google Gemini 1.5 Flash.
+* `requests` - For handling web-based API requests.
+* `python-decouple` - To manage API keys securely using `.env` files.
+
+### 🤖 Automation & System Control
+* `pyautogui` - For GUI automation (mouse and keyboard control).
+* `keyboard` - To monitor and handle system-wide hotkeys.
+* `psutil` - For monitoring CPU and RAM usage.
+* `plyer` - For sending desktop notifications.
+
+### 🪟 Windows Specific
+* `pywin32` - (win32gui, win32con, win32api) To interact with Windows OS components.
+* `WMI` - For deep system management and hardware interaction.
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
