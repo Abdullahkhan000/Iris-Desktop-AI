@@ -171,12 +171,10 @@ Examples:
 
 | Category | Command Examples |
 | :--- | :--- |
-| **System** | “Volume up”, “Mute volume”, “System status” |
+| **System** | “Volume up”, “Mute volume”, “System status”, “RAM and CPU status” |
 | **Windows** | “Minimize window”, “Close window” |
 | **Apps** | “Open Notepad”, “Open Calculator”, “Open Terminal” |
-| **Files** | “Search file secret_project.txt” |
-| **General** | “What is the time?”, “Open browser”, “Send notification” |
-| **AI** | “Write poem about coding”, “Explain quantum physics” |
+| **General** | “What is the time?”, “Open browser”, “Send notification”, “What is the weather” |
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
