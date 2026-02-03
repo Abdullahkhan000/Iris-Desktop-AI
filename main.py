@@ -1,40 +1,32 @@
 # =====================================================
-#  This Iris Desktop Made By ShadowDev / code2encoder
+# IRIS DESKTOP ASSISTANT | PRO VERSION
+# ShadowDev / code2encoder
 # =====================================================
 
-import os
-import warnings
-import logging
+import os, json, time, queue, threading, subprocess, datetime, warnings, logging
+import webbrowser as wb
+import requests, psutil, keyboard, wmi
+import speech_recognition as sr
+from gtts import gTTS
+import pygame
+from decouple import config
+import win32gui, win32con, win32api
+import google.generativeai as genai
 
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
 warnings.filterwarnings("ignore", category=FutureWarning)
 logging.basicConfig(level=logging.ERROR)
 
-import subprocess
-import webbrowser as wb
-import datetime
-import pyautogui
-import psutil
-import keyboard
-import threading
-import speech_recognition as sr
-from gtts import gTTS
-import pygame
-from decouple import config
-from plyer import notification
-import requests
-import win32gui
-import win32con
-import win32api
-import wmi
-
+# ---------------- INIT ----------------
 pygame.mixer.init()
 recognizer = sr.Recognizer()
+tts_queue = queue.Queue()
+silent_mode = False
+last_wake = 0
 
-import google.generativeai as genai
-GOOGLE_KEY = config("GOOGLE_API_KEY")
-genai.configure(api_key=GOOGLE_KEY)
+genai.configure(api_key=config("GOOGLE_API_KEY"))
 model = genai.GenerativeModel("gemini-1.5-flash")
+
 memory = []
 
 def show_banner():
@@ -89,98 +81,88 @@ def get_weather_city(city):
     except Exception:
         speak("Weather service is not available")
 
+def tts_worker():
+    while True:
+        text = tts_queue.get()
+        if silent_mode:
+            print("Iris:", text)
+            continue
+        try:
+            tts = gTTS(text)
+            tts.save("voice.mp3")
+            pygame.mixer.music.load("voice.mp3")
+            pygame.mixer.music.play()
+            while pygame.mixer.music.get_busy():
+                time.sleep(0.1)
+            pygame.mixer.music.unload()
+            os.remove("voice.mp3")
+        except:
+            pass
+
+threading.Thread(target=tts_worker, daemon=True).start()
+
 def speak(text):
-    try:
-        tts = gTTS(text)
-        tts.save("voice.mp3")
-        pygame.mixer.music.load("voice.mp3")
-        pygame.mixer.music.play()
-        while pygame.mixer.music.get_busy():
-            pygame.time.Clock().tick(10)
-        pygame.mixer.music.unload()
-        os.remove("voice.mp3")
-    except Exception:
-        pass
+    print("Iris:", text)
+    tts_queue.put(text)
 
-
-def ai(text):
-    memory.append(text)
+def ai_chat(cmd):
+    memory.append(cmd)
     try:
-        response = model.generate_content("\n".join(memory[-8:]))
-        reply = response.text
-    except Exception:
-        reply = "Sorry, I couldn't process that."
+        res = model.generate_content("\n".join(memory[-8:]))
+        reply = res.text.strip()
+    except:
+        reply = "AI response failed"
     memory.append(reply)
     speak(reply)
 
-def press_key(key):
-    win32api.keybd_event(key, 0, 0, 0)
-    win32api.keybd_event(key, 0, win32con.KEYEVENTF_KEYUP, 0)
+def confirm(cmd):
+    speak(f"Did you say {cmd}? Say yes or no.")
+    with sr.Microphone() as src:
+        audio = recognizer.listen(src, phrase_time_limit=3)
+        ans = recognizer.recognize_google(audio).lower()
+        return "yes" in ans
 
+def press(key):
+    win32api.keybd_event(key,0,0,0)
+    win32api.keybd_event(key,0,win32con.KEYEVENTF_KEYUP,0)
 
-def control_volume(action):
-    action = action.lower()
-    if action == "mute" or action == "unmute":
-        press_key(0xAD)
-        speak(f"Volume {action}d")
-    elif "up" in action:
-        for _ in range(5):
-            press_key(0xAF)
-        speak("Volume increased")
-    elif "down" in action:
-        for _ in range(5):
-            press_key(0xAE)
-        speak("Volume decreased")
+def open_app(cmd):
+    try:
+        apps = json.load(open("apps.json"))
+        for k,v in apps.items():
+            if k in cmd:
+                subprocess.Popen(v)
+                speak(f"Opening {k}")
+                return
+        speak("App not found")
+    except:
+        speak("apps.json missing")
 
-
-def window_action(action):
-    hwnd = win32gui.GetForegroundWindow()
-    if "minimize" in action:
-        win32gui.ShowWindow(hwnd, win32con.SW_MINIMIZE)
-    elif "maximize" in action:
-        win32gui.ShowWindow(hwnd, win32con.SW_MAXIMIZE)
-    elif "close" in action:
-        win32gui.PostMessage(hwnd, win32con.WM_CLOSE, 0, 0)
-    speak("Done")
-
-
-def open_any_app(name):
-    apps = {
-        "notepad": "notepad.exe",
-        "cmd": "cmd.exe",
-        "calculator": "calc.exe",
-        "paint": "mspaint.exe",
-        "task manager": "taskmgr.exe",
-        "chrome": r"C:\Program Files\Google\Chrome\Application\chrome.exe"
-    }
-    for key, exe in apps.items():
-        if key in name:
-            subprocess.Popen(exe, shell=True)
-            speak(f"Opening {key}")
-            return
-    speak("Application not found")
-
-
-def get_system_status():
+def system_status():
     cpu = psutil.cpu_percent()
     ram = psutil.virtual_memory().percent
-    speak(f"CPU at {cpu} percent, RAM at {ram} percent")
-    get_cpu_temperature()
+    speak(f"CPU {cpu} percent, RAM {ram} percent")
 
-def get_cpu_temperature():
+def cpu_temp():
     try:
-        w = wmi.WMI(namespace="root\wmi")
-        temp_info = w.MSAcpi_ThermalZoneTemperature()
-        if temp_info:
-            temp_c = temp_info[0].CurrentTemperature / 10 - 273.15
-            speak(f"The CPU temperature is {temp_c:.1f} degree Celsius")
-        else:
-            speak("Could not read CPU temperature")
-    except Exception as e:
-        speak("Error reading CPU temperature")
+        w = wmi.WMI(namespace="root\\wmi")
+        t = w.MSAcpi_ThermalZoneTemperature()[0].CurrentTemperature
+        speak(f"CPU temperature {(t/10-273.15):.1f} degree")
+    except:
+        speak("Temperature unavailable")
+
+def window_info():
+    hwnd = win32gui.GetForegroundWindow()
+    speak(win32gui.GetWindowText(hwnd))
+
+def volume(cmd):
+    if "mute" in cmd: press(0xAD)
+    if "up" in cmd: [press(0xAF) for _ in range(5)]
+    if "down" in cmd: [press(0xAE) for _ in range(5)]
 
 def process(cmd):
-    cmd = cmd.lower().strip()
+    global silent_mode
+    cmd = cmd.lower()
 
     if "weather" in cmd:
         try:
@@ -190,65 +172,74 @@ def process(cmd):
             speak("City not understood")
         return
 
-    if "cpu temperature" in cmd or "temperature" in cmd:
-        get_cpu_temperature()
+    if "silent mode" in cmd:
+        silent_mode = True
+        speak("Silent mode enabled")
+    elif "talk mode" in cmd:
+        silent_mode = False
+        speak("Voice mode enabled")
+    elif "open" in cmd:
+        open_app(cmd)
     elif "status" in cmd:
-        get_system_status()
-
-    if cmd in ["mute", "unmute"] or "volume" in cmd:
-        control_volume(cmd)
+        system_status(); cpu_temp()
+    elif "volume" in cmd or "mute" in cmd:
+        volume(cmd)
     elif "time" in cmd:
         speak(datetime.datetime.now().strftime("%I:%M %p"))
     elif "date" in cmd:
         speak(datetime.date.today().strftime("%A %d %B %Y"))
-    elif "status" in cmd:
-        get_system_status()
-    elif "open" in cmd:
-        open_any_app(cmd)
+    elif "what app" in cmd:
+        window_info()
     elif "browser" in cmd:
         wb.open("https://google.com")
         speak("Opening browser")
-
     elif "exit" in cmd:
         speak("Goodbye")
-        exit()
+        os._exit(0)
     else:
-        ai(cmd)
+        ai_chat(cmd)
 
-def wake_word_listener():
-    with sr.Microphone() as source:
-        recognizer.adjust_for_ambient_noise(source)
-        while True:
-            try:
-                audio = recognizer.listen(source, phrase_time_limit=3)
-                text = recognizer.recognize_google(audio).lower()
-                if "iris" in text:
-                    speak("Yes?")
-                    listen_for_command()
-            except Exception:
-                continue
-
-
-def listen_for_command():
-    with sr.Microphone() as source:
-        recognizer.adjust_for_ambient_noise(source)
+def listen_command():
+    with sr.Microphone() as src:
+        recognizer.adjust_for_ambient_noise(src, duration=0.5)
         try:
-            audio = recognizer.listen(source, phrase_time_limit=5)
+            audio = recognizer.listen(src, phrase_time_limit=5)
             text = recognizer.recognize_google(audio)
             print("Command:", text)
             process(text)
-        except Exception:
-            speak("Say that again please")
+        except sr.UnknownValueError:
+            speak("I did not catch that")
+        except sr.RequestError:
+            speak("Speech service unavailable")
+        except Exception as e:
+            print("Listen Error:", e)
+            speak("Something went wrong")
 
 
-def hotkey_listener():
+def wake_listener():
+    global last_wake
+    with sr.Microphone() as src:
+        while True:
+            audio = recognizer.listen(src, phrase_time_limit=3)
+            try:
+                txt = recognizer.recognize_google(audio).lower()
+                if "iris" in txt and time.time() - last_wake > 4:
+                    last_wake = time.time()
+                    speak("Yes?")
+                    listen_command()
+            except sr.UnknownValueError:
+                pass
+            except:
+                pass
+
+def hotkey():
     while True:
         keyboard.wait("ctrl+alt+i")
         speak("Listening")
-        listen_for_command()
+        listen_command()
 
+# ---------------- MAIN ----------------
 if __name__ == "__main__":
-    show_banner()
-    speak("Iris is ready")
-    threading.Thread(target=wake_word_listener, daemon=True).start()
-    hotkey_listener()
+    speak("Iris Pro is ready")
+    threading.Thread(target=wake_listener, daemon=True).start()
+    hotkey()

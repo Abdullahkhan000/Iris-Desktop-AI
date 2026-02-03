@@ -1,0 +1,10 @@
+{
+  "cmd": "wt.exe",
+  "terminal": "wt.exe",
+  "powershell": "wt.exe powershell",
+  "notepad": "notepad.exe",
+  "calculator": "calc.exe",
+  "chrome": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+  "vscode": "Code.exe",
+  "spotify": "spotify.exe"
+}
